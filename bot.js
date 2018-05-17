@@ -3,8 +3,8 @@ const { Telegram } = require('telegraf');
 const moment = require('moment');
 const app = require('./app.js');
 
-const bot = new Telegraf('559801490:AAHmrvLFW2J97FhJfJV4YX_eYcSNCeWRriE');
-const client = new Telegram('559801490:AAHmrvLFW2J97FhJfJV4YX_eYcSNCeWRriE');
+//const bot = new Telegraf(); add your API Keys here
+// const client = new Telegram(); add your API keys here
 
 const today = moment().format('dddd').toLowerCase();
 let username;
