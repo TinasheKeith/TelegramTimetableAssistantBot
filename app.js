@@ -4,17 +4,11 @@ const _ = require('lodash');
 const timediff = require('timediff');
 const week = table.week;
 
-const getPeriod = period => {
-	if(period >= 1) {
-		return period - 1;
-	} 
-	return null;
-}
-
 let today = moment().format('dddd').toLowerCase();
 let nextClass;
 
 const periodsToday = (day) => week[day].map(val => val);
+
 const getStartTimes = day => week[day].map(val => val.start).filter(val => val != null);
 const fetchAll = day => week[day].map(val => val.start);
 const getEndTimes = day => week[day].map(val => val.end).filter(val => val != null);
@@ -31,6 +25,50 @@ const invokeDay = (day, period) => {
 	}
 }
 
+const getCurrentPeriod = (hour, minute) => {
+	switch(hour) {
+		case 8: return invokeDay(day, 1); break;
+		case 9: 
+			if(minute >= 10) {
+				return 1;
+			} else {
+				return 2;
+			}
+		case 10:
+			if(minute < 40) {
+				return 3;
+			} else {
+				return 4;
+			}
+		case 11:
+			if(minute > 25) {
+				return 4;
+			} else {
+				return 5;
+			}
+		case 12: 
+			if(minute < 55) {
+				return 6;
+			} else {
+				return null;
+			}
+		case 13:
+			if(minute < 45) {
+				return null;
+			} else {
+				return 7;
+			} 
+		case 14: 
+			return 8;	
+	}
+}
+
+const getCurrentClass = (day, hour, minute) => {
+	return invokeDay(day, getCurrentPeriod(hour, minute));
+}
+
+console.log('Current class test', getCurrentClass('monday', 11, 26));
+
 const getFirstClass = day => {
 	const times = fetchAll(day);
 	for(let i = 0; i < times.length; i++) {
@@ -41,49 +79,16 @@ const getFirstClass = day => {
 	return null;
 }
 
-const getCurrentClass = day => {
-	let currentClass = null; 	
-	const currentHour = moment().hour();
-	const currentMinutes = moment().minute();
-	const startTimes = _.uniq(getStartTimes(day));
-	const endTimes = _.uniq(getEndTimes(day));
-	const startHours = startTimes.map(val => val.substring(0, 2));
-	const startMinutes = startTimes.map(val => val.substring(3, 5));
-	
-	const getClass = (day, hour) => {
-		let fetchEverything = day => week[day].map(val => val.start);
-		let allStartTimes = fetchEverything(day);
-		for(let i = 0; i < allStartTimes.length; i++) {
-			if(allStartTimes[i] !== null) {
-				if(allStartTimes[i].substring(0, 2) == hour.toString()) {
-					currentClass = invokeDay(day, i);
-					nextClass = i + 1;
-					break;
-				}
-			}
-		}
-	}
-	getClass(day, 11);
-}
-
-// console.log(getCurrentClass(today, 10));
-
-const getNextClass = (day) => {
-	getCurrentClass(day);
-	return fetchAll(day)[nextClass];
-} 
-
 module.exports = {
 	week,
 	today, 
 	nextClass, 	
-	getPeriod,
 	periodsToday, 
 	getStartTimes, 
 	fetchAll, 
 	getEndTimes, 
 	getTodayLecturers, 
 	getFirstClass, 
+	getCurrentPeriod, 
 	getCurrentClass
 };
-
