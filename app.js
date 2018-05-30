@@ -4,6 +4,7 @@ const _ = require('lodash');
 const timediff = require('timediff');
 const week = table.week;
 
+
 let today = moment().format('dddd').toLowerCase();
 let nextClass;
 
@@ -66,8 +67,6 @@ const getCurrentPeriod = (hour, minute) => {
 const getCurrentClass = (day, hour, minute) => {
 	return invokeDay(day, getCurrentPeriod(hour, minute));
 }
-
-console.log('Current class test', getCurrentClass('monday', 11, 26));
 
 const getFirstClass = day => {
 	const times = fetchAll(day);
